@@ -1,11 +1,11 @@
 const crypto = require('node:crypto')
 const express = require('express')
 const cors = require('cors')
-const PORT = process.env.PORT ?? 3000
 const movies = require('./movies.json')
 const { validateMovie, validatePartialMovie } = require('./schemas/movies.js')
 
 const app = express()
+const PORT = process.env.PORT ?? 3000
 app.use(express.json())
 app.use(
   cors({
@@ -17,11 +17,10 @@ app.use(
         'http://localhost:8080'
       ]
 
-      if (ACCEPTED_ORIGINS.includes(origin)) {
-        callback(null, true)
-      } else {
-        callback(new Error('No permitido'))
+      if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+        return callback(null, true)
       }
+      return callback(new Error('No permitido por CORS'))
     }
   })
 )
