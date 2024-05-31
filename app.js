@@ -1,51 +1,21 @@
-const crypto = require('node:crypto')
-const express = require('express')
-const cors = require('cors')
-const movies = require('./movies.json')
-const { validateMovie, validatePartialMovie } = require('./schemas/movies.js')
+import express, { json } from 'express'
+import { moviesRouter } from './routes/movies.js'
+import { corsMiddleware } from './middleware/cors.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
-app.use(express.json())
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const ACCEPTED_ORIGINS = [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:5000',
-        'http://localhost:8080'
-      ]
-
-      if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-        return callback(null, true)
-      }
-      return callback(new Error('No permitido por CORS'))
-    }
-  })
-)
+app.use(json())
+app.use(corsMiddleware())
 app.disable('x-powered-by')
 
 // Todos los recursos que se identifican con este recurso. Ademas del filtro
-app.get('/movies', (req, res) => {
-  // No necesario debido a la dependencia CORS.
-  // const origin = req.header('origin')
+app.use('/movies', moviesRouter)
 
-  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-  //   res.header('Access-Control-Allow-Origin', origin)
-  // }
-  const { genre } = req.query
-
-  if (genre) {
-    const filterMoviesByGenre = movies.find((movie) =>
-      movie.genre.some((g) => g.toLowerCase() === genre.toLowerCase())
-    )
-    return res.json(filterMoviesByGenre)
-  }
-
-  res.json(movies)
+app.listen(PORT, () => {
+  console.log(`server running on port http://localhost:${PORT}`)
 })
 
+/*
 // Id pelicula Batman: c8a7d63f-3b04-44d3-9d95-8782fd7dcfaf
 app.get('/movies/:id', (req, res) => {
   const { id } = req.params
@@ -92,7 +62,7 @@ app.post('/movies', (req, res) => {
   }
 
   const newMovie = {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ...result.data
   }
 
@@ -126,10 +96,6 @@ app.delete('/movies/:id', (req, res) => {
 
 //   res.send()
 // })
-
-app.listen(PORT, () => {
-  console.log(`server running on port http://localhost:${PORT}`)
-})
 
 // *******************
 // Todas las movies
