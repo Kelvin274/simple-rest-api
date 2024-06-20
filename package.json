@@ -5,7 +5,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "start:mysql": "node --watch server-whit-mysql.js",
+    "start:local": "node --watch server-whit-local.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +15,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "4.19.2",
+    "mongodb": "^6.7.0",
+    "mysql2": "^3.10.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -1,12 +1,17 @@
 import { Router } from 'express'
 import { MovieController } from '../controllers/movies.js'
 
-// const movies = readJSON('./movies.json')
-export const moviesRouter = Router()
+export const createMovieRouter = ({ movieModel }) => {
+  const moviesRouter = Router()
 
-moviesRouter.get('/', MovieController.getAll)
-moviesRouter.post('/', MovieController.create)
+  const movieController = new MovieController({ movieModel })
 
-moviesRouter.get('/:id', MovieController.getById)
-moviesRouter.patch('/:id', MovieController.update)
-moviesRouter.delete('/:id', MovieController.delete)
+  moviesRouter.get('/', movieController.getAll)
+  moviesRouter.post('/', movieController.create)
+
+  moviesRouter.get('/:id', movieController.getById)
+  moviesRouter.patch('/:id', movieController.update)
+  moviesRouter.delete('/:id', movieController.delete)
+
+  return moviesRouter
+}

@@ -1,11 +1,13 @@
-import { MovieModel } from '../models/movie.js'
-
 import { validateMovie, validatePartialMovie } from '../schemas/movies.js'
 
 export class MovieController {
-  static async getAll(req, res) {
+  constructor({ movieModel }) {
+    this.movieModel = movieModel
+  }
+
+  getAll = async (req, res) => {
     const { genre } = req.query
-    const movies = await MovieModel.getAll({ genre })
+    const movies = await this.movieModel.getAll({ genre })
 
     // Cambiamos a logica de negocio con class
     // if (genre) {
@@ -19,9 +21,9 @@ export class MovieController {
     res.json(movies)
   }
 
-  static async getById(req, res) {
+  getById = async (req, res) => {
     const { id } = req.params
-    const movie = await MovieModel.getById({ id })
+    const movie = await this.movieModel.getById({ id })
 
     // Cambiamos a logica de negocio x class
     // const movie = movies.find((movie) => movie.id === id)
@@ -31,7 +33,7 @@ export class MovieController {
     res.status(404).json({ error: 'Movie not found' })
   }
 
-  static async create(req, res) {
+  create = async (req, res) => {
     // El recurso se identifica con la misma url.
     const result = validateMovie(req.body)
 
@@ -41,7 +43,7 @@ export class MovieController {
       })
     }
 
-    const newMovie = await MovieModel.create({ dataMovie: result.data })
+    const newMovie = await this.movieModel.create({ dataMovie: result.data })
 
     // Cambiamos a logica de negocio x class
     // const newMovie = {
@@ -55,7 +57,7 @@ export class MovieController {
     res.status(201).json(newMovie) // actualizar la cache del cliente
   }
 
-  static async update(req, res) {
+  update = async (req, res) => {
     const result = validatePartialMovie(req.body)
 
     if (result.error) {
@@ -65,7 +67,7 @@ export class MovieController {
     }
 
     const { id } = req.params
-    const updateMovie = await MovieModel.update({
+    const updateMovie = await this.movieModel.update({
       id,
       dataMovie: result.data
     })
@@ -85,10 +87,10 @@ export class MovieController {
     return res.json(updateMovie)
   }
 
-  static async delete(req, res) {
+  delete = async (req, res) => {
     const { id } = req.params
 
-    const result = await MovieModel.delete({ id })
+    const result = await this.movieModel.delete({ id })
     // Cambiamos a logica de middleware x class
     // const movieIndex = movies.findIndex((movie) => movie.id === id)
 

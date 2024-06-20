@@ -1,19 +1,21 @@
 import express, { json } from 'express'
-import { moviesRouter } from './routes/movies.js'
+import { createMovieRouter } from './routes/movies.js'
 import { corsMiddleware } from './middleware/cors.js'
 
-const app = express()
-const PORT = process.env.PORT ?? 3000
-app.use(json())
-app.use(corsMiddleware())
-app.disable('x-powered-by')
+export const createApp = ({ movieModel }) => {
+  const app = express()
+  const PORT = process.env.PORT ?? 3000
+  app.use(json())
+  app.use(corsMiddleware())
+  app.disable('x-powered-by')
 
-// Todos los recursos que se identifican con este recurso. Ademas del filtro
-app.use('/movies', moviesRouter)
+  // Todos los recursos que se identifican con este recurso. Ademas del filtro
+  app.use('/movies', createMovieRouter({ movieModel: movieModel }))
 
-app.listen(PORT, () => {
-  console.log(`server running on port http://localhost:${PORT}`)
-})
+  app.listen(PORT, () => {
+    console.log(`server running on port http://localhost:${PORT}`)
+  })
+}
 
 /*
 // Id pelicula Batman: c8a7d63f-3b04-44d3-9d95-8782fd7dcfaf
